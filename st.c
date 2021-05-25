@@ -1056,6 +1056,11 @@ tnew(int col, int row)
 	treset();
 }
 
+int tisaltscr(void)
+{
+	return IS_SET(MODE_ALTSCREEN);
+}
+
 void
 tswapscreen(void)
 {
@@ -2569,6 +2574,14 @@ tresize(int col, int row)
 	term.alt  = xrealloc(term.alt,  row * sizeof(Line));
 	term.dirty = xrealloc(term.dirty, row * sizeof(*term.dirty));
 	term.tabs = xrealloc(term.tabs, col * sizeof(*term.tabs));
+
+	for (i = 0; i < HISTSIZE; i++) {
+		term.hist[i] = xrealloc(term.hist[i], col * sizeof(Glyph));
+		for (j = mincol; j < col; j++) {
+			term.hist[i][j] = term.c.attr;
+			term.hist[i][j].u = ' ';
+		}
+	}
 
 	for (i = 0; i < HISTSIZE; i++) {
 		term.hist[i] = xrealloc(term.hist[i], col * sizeof(Glyph));
